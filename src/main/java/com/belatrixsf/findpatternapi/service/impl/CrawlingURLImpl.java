@@ -34,54 +34,18 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class CrawlingURLImpl implements CrawlingURL {
 
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingURLImpl.class);
-	private PageFetcher pageFetcher;
-	private Parser parser;
-	private CrawlConfig config = new CrawlConfig();
-	private List<String> rulNotFound = new ArrayList<>();
-	private int cont=0;
+	private  PageFetcher pageFetcher;
+	private  Parser parser;
+	private  CrawlConfig config = new CrawlConfig();
 
-	/**
-	 * Start processing of urls
-	 */
-	@Override
-	public void exploreFile(String regexr) {
-		try {
-			init();
-			// TODO Auto-generated method stub
-			System.out.println("entra al proceso");
-			List<String> listURL = readFile();
-			System.out.println("Proceso 11: "+listURL.toString());
-			initCrawling(listURL);
-			initCrawling(clearURLHttps(rulNotFound));			
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * 
-	 * @param listURL
-	 * @return
-	 */
-	private List<String> clearURLHttps(List<String> listURL) {
-		List<String> newlistURL= new ArrayList<>();
-		if(listURL!=null) {
-			
-			for(String url:listURL) {
-				url = url.replace("http://","https://");	
-				newlistURL.add(url);
-			}			
-		}
-		if(newlistURL.isEmpty()) {
-			return null;
-		}		
-		return newlistURL;
-	}
-
+	private int cont = 0;
+	private boolean notFound = false;
+	private String regexr;
+	
 	/**
 	 * 
 	 */
-	private void init() {
+	private  void init() {
 		try {
 			config.setFollowRedirects(true);
 			parser = new Parser(config);
@@ -93,6 +57,45 @@ public class CrawlingURLImpl implements CrawlingURL {
 	}
 
 	/**
+	 * Start processing of urls
+	 */
+	@Override
+	public void exploreFile(String regexrIN) {
+		try {
+			regexr=regexrIN;
+			init();
+			// TODO Auto-generated method stub
+			System.out.println("entra al proceso");
+			List<String> listURL = readFile();
+			System.out.println("Proceso 11: " + listURL.toString());
+			initCrawling(listURL);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param listURL
+	 * @return
+	 */
+	private String changeURLHttps(String url) {
+		try {
+			if (url != null) {
+				url = url.replace("http://", "https://");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;
+
+	}
+
+	
+
+	/**
 	 * 
 	 * @param listURL
 	 */
@@ -100,12 +103,14 @@ public class CrawlingURLImpl implements CrawlingURL {
 
 		try {
 			if (listURL != null) {
-				
 				for (String url : listURL) {
 					cont++;
-					System.out.println("URL FOR: "+url);
+					System.out.println("URL FOR: " + url);
 					processUrl(url);
-
+					if (notFound) {
+						notFound = false;
+						processUrl(changeURLHttps(url));
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -125,65 +130,63 @@ public class CrawlingURLImpl implements CrawlingURL {
 			if (parseData != null) {
 				if (parseData instanceof HtmlParseData) {
 					HtmlParseData htmlParseData = (HtmlParseData) parseData;
-					String title = htmlParseData.getTitle();// logger.debug("Title: {}", htmlParseData.getTitle());
+					//String title = htmlParseData.getTitle();// logger.debug("Title: {}", htmlParseData.getTitle());
 					// logger.debug("Text length: {}", htmlParseData.getText().length());
 					// logger.debug("Html length: {}", htmlParseData.getHtml().length());
 					logger.debug("entra 1", url);
-					String textURL= crearText(htmlParseData.getText());
-					createOutPutFile(textURL, "Proceso Original "+cont+"_");
-					String textfound =findPattern(textURL);
-					createOutPutFile(textfound, "Proceso Pattern "+cont+"_");
+					String textURL = crearText(htmlParseData.getText());
+					createOutPutFile(textURL, "text_original_process" + cont + "_");
+					String textfound = findPattern(textURL);
+					createOutPutFile(textfound, "Pattern_founded" + cont + "_");
 				}
 			} else {
 				logger.warn("Couldn't parse the content of the page.");
 			}
 		} else {
-			
+
 			logger.warn("Couldn't fetch the content of the page.");
-			
+
 		}
 		logger.debug("==============");
 	}
-	
+
 	private String crearText(String text) {
-		
+
 		text = text.replace("\n", " ");
-		text = text.replace("\t", " ");		
+		text = text.replace("\t", " ");
 		return text;
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param text
 	 * @return
 	 */
-	private String findPattern(String text) {		
-		try {	
-			String cadena="";
-			String regexText ="(?<=[\\s>])#(\\d*[A-Za-z_]+\\d*)\\b(?!;)";
-		        Pattern pattern = Pattern.compile(regexText);
-		        Matcher matcher = pattern.matcher(text);
+	private String findPattern(String text) {
+		try {
+			String cadena = "";
+			//String regexText = regexr;
+			Pattern pattern = Pattern.compile(regexr);
+			Matcher matcher = pattern.matcher(text);
 
-		        List<String> listMatches = new ArrayList<String>();
+			List<String> listMatches = new ArrayList<String>();
 
-		        while(matcher.find())
-		        {
-		            listMatches.add(matcher.group());
-		        }
+			while (matcher.find()) {
+				listMatches.add(matcher.group());
+			}
 
-		        for(String s : listMatches)
-		        {
-		        	cadena=cadena.concat(" \n ").concat(s);
-		            System.out.println(s);
-		        }
-		        return cadena;
+			for (String s : listMatches) {
+				cadena = cadena.concat(" \n ").concat(s);
+				System.out.println(s);
+			}
+			return cadena;
 		} catch (Exception e) {
 			// TODO: handle exception
 			logger.error(e.getMessage());
 			return null;
 		}
-		
+
 	}
 
 	/**
@@ -192,7 +195,7 @@ public class CrawlingURLImpl implements CrawlingURL {
 	private void createOutPutFile(String data, String name) {
 		OutputStream os = null;
 		try {
-			if(data!=null && name!=null) {
+			if (data != null && name != null) {
 				name = name.concat(nameFile());
 				os = new FileOutputStream(new File("C:/files/out/" + name + ".txt"));
 				os.write(data.getBytes(), 0, data.length());
@@ -201,7 +204,7 @@ public class CrawlingURLImpl implements CrawlingURL {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(os!=null) {
+				if (os != null) {
 					os.close();
 				}
 			} catch (IOException e) {
@@ -209,11 +212,11 @@ public class CrawlingURLImpl implements CrawlingURL {
 			}
 		}
 	}
-	
+
 	private String nameFile() {
-		SimpleDateFormat sdf= new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss");
 		Date fecha = new Date();
-		return sdf.format(fecha);		
+		return sdf.format(fecha);
 	}
 
 	/**
@@ -232,10 +235,9 @@ public class CrawlingURLImpl implements CrawlingURL {
 				fetchResult.fetchContent(page, config.getMaxDownloadSize());
 				parser.parse(page, curURL.getURL());
 				return page;
-			}
-			else {
-				createOutPutFile("404 page not found ".concat(url),curURL.getDomain());			
-				rulNotFound.add(url);
+			} else {
+				createOutPutFile("404 page not found ".concat(url), curURL.getDomain());
+				notFound = true;
 			}
 		} catch (Exception e) {
 			logger.error("Error occurred while fetching url: " + curURL.getURL(), e);
