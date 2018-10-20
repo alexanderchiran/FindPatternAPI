@@ -1,25 +1,25 @@
 package com.belatrixsf.findpatternapi.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.belatrixsf.findpatternapi.helpers.RegexModel;
-import com.belatrixsf.findpatternapi.service.Regex;
+import com.belatrixsf.findpatternapi.repositories.RegexRepository;
+import com.belatrixsf.findpatternapi.service.IRegex;
 
 
 @Repository
-public class RegexImpl implements Regex {
+public class RegexImpl implements IRegex {
 	
-	
-	
-	
+	@Autowired
+	private RegexRepository regexRepository;
 
 	@Override
-	public RegexModel getById(String id) {
-		//return regexRepository.findById(id).orElse(null);
-		//Query query = new Query();
-		//query.addCriteria(Criteria.where("id").is(id));
-		//return mongoTemplate.findOne(query, RegexModel.class);
-		return null;
+	public List<RegexModel> findAll() {
+		// TODO Auto-generated method stub
+		return regexRepository.findAll();
 	}
 
 }

@@ -5,13 +5,13 @@ package com.belatrixsf.findpatternapi.model;
 public class ClientPattern {
 
 
-	String regexr;
+	private Integer regexr;
 
-	public String getRegexr() {
+	public Integer getRegexr() {
 		return regexr;
 	}
 
-	public void setRegexr(String regexr) {
+	public void setRegexr(Integer regexr) {
 		this.regexr = regexr;
 	}
 	

@@ -6,46 +6,49 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpStatus;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.belatrixsf.findpatternapi.service.CrawlingURL;
-
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.fetcher.PageFetchResult;
-import edu.uci.ics.crawler4j.fetcher.PageFetcher;
-import edu.uci.ics.crawler4j.parser.HtmlParseData;
-import edu.uci.ics.crawler4j.parser.ParseData;
-import edu.uci.ics.crawler4j.parser.Parser;
-import edu.uci.ics.crawler4j.url.WebURL;
+import com.belatrixsf.findpatternapi.helpers.RegexModel;
+import com.belatrixsf.findpatternapi.repositories.RegexRepository;
+import com.belatrixsf.findpatternapi.service.ICrawlingURL;
 
 @Service("crawlingURLImpl")
-public class CrawlingURLImpl implements CrawlingURL {
+public class CrawlingURLImpl implements ICrawlingURL {
+
+	@Autowired
+	private RegexRepository regexRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingURLImpl.class);
-	private  PageFetcher pageFetcher;
-	private  Parser parser;
-	private  CrawlConfig config = new CrawlConfig();
+	//private PageFetcher pageFetcher;
+	//private Parser parser;
+	//private CrawlConfig config = new CrawlConfig();
 
-	private int cont = 0;
-	private boolean notFound = false;
+	//private int cont = 0;
+	// private boolean notFound = false;
 	private String regexr;
-	
+
 	/**
 	 * 
 	 */
-	private  void init() {
+	/*
+	private void init() {
 		try {
 			config.setFollowRedirects(true);
 			parser = new Parser(config);
@@ -54,20 +57,37 @@ public class CrawlingURLImpl implements CrawlingURL {
 			logger.error(e.getMessage());
 		}
 
+	}*/
+
+	/**
+	 * 
+	 * @param id
+	 */
+	private void obtainRegex(Integer id) {
+		try {
+			Optional<RegexModel> regexmodel = regexRepository.findById(id);
+			regexr = regexmodel.get().getValue();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
 	}
 
 	/**
 	 * Start processing of urls
 	 */
 	@Override
-	public void exploreFile(String regexrIN) {
+	public void exploreFile(Integer regexrIN) {
 		try {
-			regexr=regexrIN;
-			init();
+			//init();
+			obtainRegex(regexrIN);
 			// TODO Auto-generated method stub
 			System.out.println("entra al proceso");
+
 			List<String> listURL = readFile();
 			System.out.println("Proceso 11: " + listURL.toString());
+
 			initCrawling(listURL);
 
 		} catch (Exception e) {
@@ -80,20 +100,14 @@ public class CrawlingURLImpl implements CrawlingURL {
 	 * @param listURL
 	 * @return
 	 */
-	private String changeURLHttps(String url) {
-		try {
-			if (url != null) {
-				url = url.replace("http://", "https://");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return url;
-
-	}
-
-	
+	/*
+	 * private String changeURLHttps(String url) { try { if (url != null) { url =
+	 * url.replace("http://", "https://"); }
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); } return url;
+	 * 
+	 * }
+	 */
 
 	/**
 	 * 
@@ -104,25 +118,163 @@ public class CrawlingURLImpl implements CrawlingURL {
 		try {
 			if (listURL != null) {
 				for (String url : listURL) {
-					cont++;
+					 URL netUrl = new URL(url);
+					 String host = netUrl.getHost();
+					    
+					//cont++;
 					System.out.println("URL FOR: " + url);
-					processUrl(url);
-					if (notFound) {
-						notFound = false;
-						processUrl(changeURLHttps(url));
-					}
+					// url= checkURL(url);
+					 String textHtml=getHtmlFromPage(url);
+					 if(textHtml!=null) {
+						 String cleanText=cleantext(textHtml);
+						 createOutPutFile(cleanText, "Original_text_"+host.concat(nameFile()));
+						 String textfound = findPattern(cleanText);
+						 createOutPutFile(textfound, "Pattern_founded_"+host.concat(nameFile()));
+						 
+					 }
+
+					/*
+					 * if (notFound) { notFound = false; if (url.contains("https://")) {
+					 * processUrl(changeURLHttps(url)); } }
+					 */
 				}
+				System.out.println("Finaliza Proceso ");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
 
+	
+	private String cleantext(String textHtml) {
+		try {
+			Document doc = Jsoup.parse(textHtml);
+			String cleantext = doc.body().text(); // "An example link"
+			System.out.println("Texto limpio: "+cleantext);			
+			return cleantext;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+		
+	}
+	/**
+	 * 
+	 * @param url
+	 * @return
+	 */
+
+	/*
+	private String checkURL(String url) {
+		try {
+			URL obj = new URL(url);
+
+			HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+			conn.setReadTimeout(5000);
+			conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+			conn.addRequestProperty("User-Agent", "Mozilla");
+			conn.addRequestProperty("Referer", "google.com");
+
+			System.out.println("Request URL ... " + url);
+
+			boolean redirect = false;
+
+			// normally, 3xx is redirect
+			int status = conn.getResponseCode();
+			if (status != HttpURLConnection.HTTP_OK) {
+				if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+						|| status == HttpURLConnection.HTTP_SEE_OTHER)
+					redirect = true;
+			}
+
+			System.out.println("Response Code ... " + status);
+
+			if (redirect) {
+
+				// get redirect url from "location" header field
+				url = conn.getHeaderField("Location");
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return url;
+	}
+	*/
+
+	public String getHtmlFromPage(String url) {
+
+		try {
+
+			// String url = "https://metricool.com/es/hashtags-mas-usados-instagram/";
+
+			URL obj = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+			conn.setReadTimeout(5000);
+			conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+			conn.addRequestProperty("User-Agent", "Mozilla");
+			conn.addRequestProperty("Referer", "google.com");
+
+			System.out.println("Request URL ... " + url);
+
+			boolean redirect = false;
+
+			// normally, 3xx is redirect
+			int status = conn.getResponseCode();
+			if (status != HttpURLConnection.HTTP_OK) {
+				if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+						|| status == HttpURLConnection.HTTP_SEE_OTHER)
+					redirect = true;
+			}
+
+			System.out.println("Response Code ... " + status);
+
+			if (redirect) {
+
+				// get redirect url from "location" header field
+				String newUrl = conn.getHeaderField("Location");
+
+				// get the cookie if need, for login
+				String cookies = conn.getHeaderField("Set-Cookie");
+
+				// open the new connnection again
+				conn = (HttpURLConnection) new URL(newUrl).openConnection();
+				conn.setRequestProperty("Cookie", cookies);
+				conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+				conn.addRequestProperty("User-Agent", "Mozilla");
+				conn.addRequestProperty("Referer", "google.com");
+
+				System.out.println("Redirect to URL : " + newUrl);
+
+			}
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+			StringBuffer html = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				html.append(inputLine);
+			}
+			in.close();
+
+			System.out.println("URL Content... \n" + html.toString());
+			System.out.println("Done");
+			
+			return html.toString();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	/**
 	 * 
 	 * @param url
 	 */
-	public void processUrl(String url) {
+	/*
+	private void processUrl1(String url) {
 		logger.debug("Processing: {}", url);
 		Page page = download(url);
 		if (page != null) {
@@ -130,7 +282,8 @@ public class CrawlingURLImpl implements CrawlingURL {
 			if (parseData != null) {
 				if (parseData instanceof HtmlParseData) {
 					HtmlParseData htmlParseData = (HtmlParseData) parseData;
-					//String title = htmlParseData.getTitle();// logger.debug("Title: {}", htmlParseData.getTitle());
+					// String title = htmlParseData.getTitle();// logger.debug("Title: {}",
+					// htmlParseData.getTitle());
 					// logger.debug("Text length: {}", htmlParseData.getText().length());
 					// logger.debug("Html length: {}", htmlParseData.getHtml().length());
 					logger.debug("entra 1", url);
@@ -148,15 +301,16 @@ public class CrawlingURLImpl implements CrawlingURL {
 
 		}
 		logger.debug("==============");
-	}
+	}*/
 
+	/*
 	private String crearText(String text) {
 
 		text = text.replace("\n", " ");
 		text = text.replace("\t", " ");
 		return text;
 
-	}
+	}*/
 
 	/**
 	 * 
@@ -166,7 +320,7 @@ public class CrawlingURLImpl implements CrawlingURL {
 	private String findPattern(String text) {
 		try {
 			String cadena = "";
-			//String regexText = regexr;
+			// String regexText = regexr;
 			Pattern pattern = Pattern.compile(regexr);
 			Matcher matcher = pattern.matcher(text);
 
@@ -224,6 +378,7 @@ public class CrawlingURLImpl implements CrawlingURL {
 	 * @param url
 	 * @return
 	 */
+	/*
 	private Page download(String url) {
 		WebURL curURL = new WebURL();
 		curURL.setURL(url);
@@ -237,7 +392,7 @@ public class CrawlingURLImpl implements CrawlingURL {
 				return page;
 			} else {
 				createOutPutFile("404 page not found ".concat(url), curURL.getDomain());
-				notFound = true;
+				//notFound = true;
 			}
 		} catch (Exception e) {
 			logger.error("Error occurred while fetching url: " + curURL.getURL(), e);
@@ -248,6 +403,7 @@ public class CrawlingURLImpl implements CrawlingURL {
 		}
 		return null;
 	}
+	*/
 
 	/**
 	 * reading the file and you get a list of urls

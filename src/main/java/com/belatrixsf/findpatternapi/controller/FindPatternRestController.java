@@ -2,6 +2,7 @@ package com.belatrixsf.findpatternapi.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,20 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 import com.belatrixsf.findpatternapi.helpers.RegexModel;
 import com.belatrixsf.findpatternapi.model.ClientPattern;
 import com.belatrixsf.findpatternapi.model.Message;
-import com.belatrixsf.findpatternapi.repositories.RegexRepository;
+import com.belatrixsf.findpatternapi.service.ICrawlingURL;
+import com.belatrixsf.findpatternapi.service.IRegex;
 
 @RestController
 @RequestMapping("/process")
 public class FindPatternRestController {
 
+	@Autowired
+	private ICrawlingURL crawlingURL;
 	//@Autowired
-//	private CrawlingURL crawlingURL;
+	//private IRegex iRegex;
 	
-	private RegexRepository regexRepository;
-	
-	 public FindPatternRestController(RegexRepository regexRepository) {
+	/* public FindPatternRestController(RegexRepository regexRepository) {
 	        this.regexRepository = regexRepository;
-	    }
+	    }*/
 	
 	/**
 	 * this method let process the file with URLs
@@ -42,10 +44,10 @@ public class FindPatternRestController {
 			System.out.println("regexr enviado " + clientPattern.getRegexr());
 			
 			//RegexModel result= regex.getById("5bc93230477cb8222052dd84");
-			Integer val=1;
-			RegexModel regexModel = new RegexModel();
-			regexModel.setId(1);
-			List<RegexModel> rm= regexRepository.findAll();
+			//Integer val=1;
+			//RegexModel regexModel = new RegexModel();
+			//regexModel.setId(1);
+			//List<RegexModel> rm= iRegex.findAll();
 			
 			System.out.println("regexr enviado " + clientPattern.getRegexr());
 			
@@ -53,7 +55,7 @@ public class FindPatternRestController {
 			 * validation that lets you know if a non-zero string is coming
 			 */
 			if(clientPattern.getRegexr() != null) {
-				//crawlingURL.exploreFile(clientPattern.getRegexr());
+				crawlingURL.exploreFile(clientPattern.getRegexr());
 				message = new Message("1", "proceso correcto");
 				return new ResponseEntity<Message>(message, HttpStatus.OK);
 			}

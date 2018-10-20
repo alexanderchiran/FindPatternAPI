@@ -1,8 +1,12 @@
 package com.belatrixsf.findpatternapi.service;
 
+import java.util.List;
+
 import com.belatrixsf.findpatternapi.helpers.RegexModel;
 
-public interface Regex {
+public interface IRegex {
+
+	List<RegexModel> findAll();
 	
-	RegexModel getById(String id);
+
 }
