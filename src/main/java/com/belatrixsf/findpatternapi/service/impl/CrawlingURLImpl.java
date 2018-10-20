@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -36,28 +38,24 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	private RegexRepository regexRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(CrawlingURLImpl.class);
-	//private PageFetcher pageFetcher;
-	//private Parser parser;
-	//private CrawlConfig config = new CrawlConfig();
+	// private PageFetcher pageFetcher;
+	// private Parser parser;
+	// private CrawlConfig config = new CrawlConfig();
 
-	//private int cont = 0;
+	// private int cont = 0;
 	// private boolean notFound = false;
 	private String regexr;
-
+	private List<String> notsslUrls;
 	/**
 	 * 
 	 */
 	/*
-	private void init() {
-		try {
-			config.setFollowRedirects(true);
-			parser = new Parser(config);
-			pageFetcher = new PageFetcher(config);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-
-	}*/
+	 * private void init() { try { config.setFollowRedirects(true); parser = new
+	 * Parser(config); pageFetcher = new PageFetcher(config); } catch (Exception e)
+	 * { logger.error(e.getMessage()); }
+	 * 
+	 * }
+	 */
 
 	/**
 	 * 
@@ -69,7 +67,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 			regexr = regexmodel.get().getValue();
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 
 	}
@@ -80,7 +78,8 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	@Override
 	public void exploreFile(Integer regexrIN) {
 		try {
-			//init();
+			// init();
+			notsslUrls = new ArrayList<>();
 			obtainRegex(regexrIN);
 			// TODO Auto-generated method stub
 			System.out.println("entra al proceso");
@@ -89,6 +88,9 @@ public class CrawlingURLImpl implements ICrawlingURL {
 			System.out.println("Proceso 11: " + listURL.toString());
 
 			initCrawling(listURL);
+			if(!notsslUrls.isEmpty()) {
+				initCrawling(notsslUrls);				
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,14 +102,32 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	 * @param listURL
 	 * @return
 	 */
-	/*
-	 * private String changeURLHttps(String url) { try { if (url != null) { url =
-	 * url.replace("http://", "https://"); }
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); } return url;
-	 * 
-	 * }
-	 */
+
+	private String changeURLHttps(String url) {
+		try {
+			if (url != null) {
+				url = url.replace("http://", "https://");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;
+
+	}
+	
+	private String changeURLHttp(String url) {
+		try {
+			if (url != null) {
+				url = url.replace("https://", "http://");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;
+
+	}
 
 	/**
 	 * 
@@ -118,20 +138,21 @@ public class CrawlingURLImpl implements ICrawlingURL {
 		try {
 			if (listURL != null) {
 				for (String url : listURL) {
-					 URL netUrl = new URL(url);
-					 String host = netUrl.getHost();
-					    
-					//cont++;
+					
+					URL netUrl = new URL(url);
+					String host = netUrl.getHost();
+
+					// cont++;
 					System.out.println("URL FOR: " + url);
 					// url= checkURL(url);
-					 String textHtml=getHtmlFromPage(url);
-					 if(textHtml!=null) {
-						 String cleanText=cleantext(textHtml);
-						 createOutPutFile(cleanText, "Original_text_"+host.concat(nameFile()));
-						 String textfound = findPattern(cleanText);
-						 createOutPutFile(textfound, "Pattern_founded_"+host.concat(nameFile()));
-						 
-					 }
+					String textHtml = getHtmlFromPage(url);
+					if (textHtml != null) {
+						String cleanText = cleantext(textHtml);
+						createOutPutFile(cleanText, "Original_text_" + host.concat(nameFile()));
+						String textfound = findPattern(cleanText);
+						createOutPutFile(textfound, "Pattern_founded_" + host);
+
+					}
 
 					/*
 					 * if (notFound) { notFound = false; if (url.contains("https://")) {
@@ -141,23 +162,23 @@ public class CrawlingURLImpl implements ICrawlingURL {
 				System.out.println("Finaliza Proceso ");
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 
-	
 	private String cleantext(String textHtml) {
 		try {
 			Document doc = Jsoup.parse(textHtml);
 			String cleantext = doc.body().text(); // "An example link"
-			System.out.println("Texto limpio: "+cleantext);			
+			System.out.println("Texto limpio: " + cleantext);
 			return cleantext;
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
+
 	/**
 	 * 
 	 * @param url
@@ -165,52 +186,43 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	 */
 
 	/*
-	private String checkURL(String url) {
-		try {
-			URL obj = new URL(url);
-
-			HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-			conn.setReadTimeout(5000);
-			conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-			conn.addRequestProperty("User-Agent", "Mozilla");
-			conn.addRequestProperty("Referer", "google.com");
-
-			System.out.println("Request URL ... " + url);
-
-			boolean redirect = false;
-
-			// normally, 3xx is redirect
-			int status = conn.getResponseCode();
-			if (status != HttpURLConnection.HTTP_OK) {
-				if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-						|| status == HttpURLConnection.HTTP_SEE_OTHER)
-					redirect = true;
-			}
-
-			System.out.println("Response Code ... " + status);
-
-			if (redirect) {
-
-				// get redirect url from "location" header field
-				url = conn.getHeaderField("Location");
-			}
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return url;
-	}
-	*/
+	 * private String checkURL(String url) { try { URL obj = new URL(url);
+	 * 
+	 * HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+	 * conn.setReadTimeout(5000); conn.addRequestProperty("Accept-Language",
+	 * "en-US,en;q=0.8"); conn.addRequestProperty("User-Agent", "Mozilla");
+	 * conn.addRequestProperty("Referer", "google.com");
+	 * 
+	 * System.out.println("Request URL ... " + url);
+	 * 
+	 * boolean redirect = false;
+	 * 
+	 * // normally, 3xx is redirect int status = conn.getResponseCode(); if (status
+	 * != HttpURLConnection.HTTP_OK) { if (status ==
+	 * HttpURLConnection.HTTP_MOVED_TEMP || status ==
+	 * HttpURLConnection.HTTP_MOVED_PERM || status ==
+	 * HttpURLConnection.HTTP_SEE_OTHER) redirect = true; }
+	 * 
+	 * System.out.println("Response Code ... " + status);
+	 * 
+	 * if (redirect) {
+	 * 
+	 * // get redirect url from "location" header field url =
+	 * conn.getHeaderField("Location"); }
+	 * 
+	 * } catch (Exception e) { // TODO: handle exception } return url; }
+	 */
 
 	public String getHtmlFromPage(String url) {
+		HttpURLConnection conn = null;
 
 		try {
 
 			// String url = "https://metricool.com/es/hashtags-mas-usados-instagram/";
 
 			URL obj = new URL(url);
-			HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-			conn.setReadTimeout(5000);
+			conn = (HttpURLConnection) obj.openConnection();
+			conn.setReadTimeout(15000);
 			conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
 			conn.addRequestProperty("User-Agent", "Mozilla");
 			conn.addRequestProperty("Referer", "google.com");
@@ -249,6 +261,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 			}
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
 			String inputLine;
 			StringBuffer html = new StringBuffer();
 
@@ -259,11 +272,20 @@ public class CrawlingURLImpl implements ICrawlingURL {
 
 			System.out.println("URL Content... \n" + html.toString());
 			System.out.println("Done");
-			
+
 			return html.toString();
+
+		} catch (SSLHandshakeException e) {
+			e.printStackTrace();
+			notsslUrls.add(changeURLHttp(url));
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.disconnect();
+			}
+
 		}
 		return null;
 
@@ -274,43 +296,32 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	 * @param url
 	 */
 	/*
-	private void processUrl1(String url) {
-		logger.debug("Processing: {}", url);
-		Page page = download(url);
-		if (page != null) {
-			ParseData parseData = page.getParseData();
-			if (parseData != null) {
-				if (parseData instanceof HtmlParseData) {
-					HtmlParseData htmlParseData = (HtmlParseData) parseData;
-					// String title = htmlParseData.getTitle();// logger.debug("Title: {}",
-					// htmlParseData.getTitle());
-					// logger.debug("Text length: {}", htmlParseData.getText().length());
-					// logger.debug("Html length: {}", htmlParseData.getHtml().length());
-					logger.debug("entra 1", url);
-					String textURL = crearText(htmlParseData.getText());
-					createOutPutFile(textURL, "text_original_process" + cont + "_");
-					String textfound = findPattern(textURL);
-					createOutPutFile(textfound, "Pattern_founded" + cont + "_");
-				}
-			} else {
-				logger.warn("Couldn't parse the content of the page.");
-			}
-		} else {
-
-			logger.warn("Couldn't fetch the content of the page.");
-
-		}
-		logger.debug("==============");
-	}*/
+	 * private void processUrl1(String url) { logger.debug("Processing: {}", url);
+	 * Page page = download(url); if (page != null) { ParseData parseData =
+	 * page.getParseData(); if (parseData != null) { if (parseData instanceof
+	 * HtmlParseData) { HtmlParseData htmlParseData = (HtmlParseData) parseData; //
+	 * String title = htmlParseData.getTitle();// logger.debug("Title: {}", //
+	 * htmlParseData.getTitle()); // logger.debug("Text length: {}",
+	 * htmlParseData.getText().length()); // logger.debug("Html length: {}",
+	 * htmlParseData.getHtml().length()); logger.debug("entra 1", url); String
+	 * textURL = crearText(htmlParseData.getText()); createOutPutFile(textURL,
+	 * "text_original_process" + cont + "_"); String textfound =
+	 * findPattern(textURL); createOutPutFile(textfound, "Pattern_founded" + cont +
+	 * "_"); } } else { logger.warn("Couldn't parse the content of the page."); } }
+	 * else {
+	 * 
+	 * logger.warn("Couldn't fetch the content of the page.");
+	 * 
+	 * } logger.debug("=============="); }
+	 */
 
 	/*
-	private String crearText(String text) {
-
-		text = text.replace("\n", " ");
-		text = text.replace("\t", " ");
-		return text;
-
-	}*/
+	 * private String crearText(String text) {
+	 * 
+	 * text = text.replace("\n", " "); text = text.replace("\t", " "); return text;
+	 * 
+	 * }
+	 */
 
 	/**
 	 * 
@@ -336,7 +347,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 			}
 			return cadena;
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 			logger.error(e.getMessage());
 			return null;
 		}
@@ -350,9 +361,19 @@ public class CrawlingURLImpl implements ICrawlingURL {
 		OutputStream os = null;
 		try {
 			if (data != null && name != null) {
-				name = name.concat(nameFile());
-				os = new FileOutputStream(new File("C:/files/out/" + name + ".txt"));
-				os.write(data.getBytes(), 0, data.length());
+				/*
+				 * os = new FileOutputStream(new File("C:/files/out/" + name + ".txt"));
+				 * os.write(data.getBytes(), 0, data.length());
+				 */
+				String path = "C:/files/out/" + name + ".txt";
+				File file = new File(path);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				FileOutputStream writer = new FileOutputStream(path);
+				writer.write((data).getBytes());
+				writer.close();
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -368,9 +389,15 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	}
 
 	private String nameFile() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss");
-		Date fecha = new Date();
-		return sdf.format(fecha);
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss");
+			Date fecha = new Date();
+			return sdf.format(fecha);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+
 	}
 
 	/**
@@ -379,31 +406,18 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	 * @return
 	 */
 	/*
-	private Page download(String url) {
-		WebURL curURL = new WebURL();
-		curURL.setURL(url);
-		PageFetchResult fetchResult = null;
-		try {
-			fetchResult = pageFetcher.fetchPage(curURL);
-			if (fetchResult.getStatusCode() == HttpStatus.SC_OK) {
-				Page page = new Page(curURL);
-				fetchResult.fetchContent(page, config.getMaxDownloadSize());
-				parser.parse(page, curURL.getURL());
-				return page;
-			} else {
-				createOutPutFile("404 page not found ".concat(url), curURL.getDomain());
-				//notFound = true;
-			}
-		} catch (Exception e) {
-			logger.error("Error occurred while fetching url: " + curURL.getURL(), e);
-		} finally {
-			if (fetchResult != null) {
-				fetchResult.discardContentIfNotConsumed();
-			}
-		}
-		return null;
-	}
-	*/
+	 * private Page download(String url) { WebURL curURL = new WebURL();
+	 * curURL.setURL(url); PageFetchResult fetchResult = null; try { fetchResult =
+	 * pageFetcher.fetchPage(curURL); if (fetchResult.getStatusCode() ==
+	 * HttpStatus.SC_OK) { Page page = new Page(curURL);
+	 * fetchResult.fetchContent(page, config.getMaxDownloadSize());
+	 * parser.parse(page, curURL.getURL()); return page; } else {
+	 * createOutPutFile("404 page not found ".concat(url), curURL.getDomain());
+	 * //notFound = true; } } catch (Exception e) {
+	 * logger.error("Error occurred while fetching url: " + curURL.getURL(), e); }
+	 * finally { if (fetchResult != null) {
+	 * fetchResult.discardContentIfNotConsumed(); } } return null; }
+	 */
 
 	/**
 	 * reading the file and you get a list of urls
@@ -421,6 +435,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 			String text = null;
 
 			while ((text = reader.readLine()) != null) {
+				text = changeURLHttps(text);
 				listURL.add(text);
 			}
 			return listURL;
