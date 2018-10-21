@@ -1,6 +1,5 @@
 package com.belatrixsf.findpatternapi.service.impl;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,31 +10,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.belatrixsf.findpatternapi.helpers.FileUtility;
-import com.belatrixsf.findpatternapi.helpers.HttpUtility;
-import com.belatrixsf.findpatternapi.helpers.Transformation;
 import com.belatrixsf.findpatternapi.model.RegexModel;
 import com.belatrixsf.findpatternapi.repositories.RegexRepository;
 import com.belatrixsf.findpatternapi.service.ICrawlingURL;
 
 /**
  * 
- * @author Alexander Chiran
- * paulo.alexander12@gmail.com
+ * @author Alexander Chiran paulo.alexander12@gmail.com
  * 
  *
  */
-@Service("crawlingURLImpl")
+@Service
 public class CrawlingURLImpl implements ICrawlingURL {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private RegexRepository regexRepository;
 
+	@Autowired
+	private ProcessURLImpl processURLImpl;
 	
-	private Transformation transformation = new Transformation();
-	
-	private HttpUtility httpUtility = new HttpUtility();
-	
+
 	private FileUtility fileUtility = new FileUtility();
 
 	private String regexr;
@@ -77,6 +72,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	}
 
 	/**
+	 * go through each URL
 	 * 
 	 * @param listURL
 	 */
@@ -85,24 +81,14 @@ public class CrawlingURLImpl implements ICrawlingURL {
 		try {
 			if (listURL != null) {
 				for (String url : listURL) {
-
-					URL netUrl = new URL(url);
-					String host = netUrl.getHost();
-
-					String textHtml = httpUtility.getHtmlFromPage(url, notsslUrls);
-					if (textHtml != null) {
-						String cleanText = transformation.cleantext(textHtml);
-						fileUtility.createOutPutFile(cleanText, "Original_text_" + host.concat(fileUtility.nameFile()));
-						String textfound = transformation.findPattern(cleanText, regexr);
-						fileUtility.createOutPutFile(textfound, "Pattern_founded_" + host);
-
-					}
-
+					processURLImpl.processURL(url, notsslUrls, regexr);
 				}
 			}
 		} catch (Exception e) {
 			logger.error(e.toString());
 		}
 	}
+
+	
 
 }
