@@ -4,6 +4,7 @@ package com.belatrixsf.findpatternapi.service;
  * 
  * @author Alexander Chiran
  * paulo.alexander12@gmail.com
+ * 
  *
  */
 import java.util.List;

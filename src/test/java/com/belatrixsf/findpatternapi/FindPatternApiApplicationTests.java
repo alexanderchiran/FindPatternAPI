@@ -1,5 +1,6 @@
 package com.belatrixsf.findpatternapi;
 
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -10,6 +11,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ * 
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class FindPatternApiApplicationTests {

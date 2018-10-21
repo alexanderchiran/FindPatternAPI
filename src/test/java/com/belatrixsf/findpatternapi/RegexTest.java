@@ -8,6 +8,13 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ * 
+ *
+ */
 public class RegexTest {
 	
 	public static void main(String[] args) {

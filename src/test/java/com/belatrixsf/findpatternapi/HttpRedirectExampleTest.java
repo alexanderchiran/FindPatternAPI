@@ -8,6 +8,13 @@ import java.net.URL;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ * 
+ *
+ */
 public class HttpRedirectExampleTest {
 
 	public static void main(String[] args) {

@@ -7,6 +7,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ * 
+ *
+ */
 public class Tester {
 
 	public static void main(String[] args) throws Exception{

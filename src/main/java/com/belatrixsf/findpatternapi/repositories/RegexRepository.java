@@ -2,8 +2,10 @@ package com.belatrixsf.findpatternapi.repositories;
 
 /**
  * 
+ * 
  * @author Alexander Chiran
  * paulo.alexander12@gmail.com
+ * 
  *
  */
 import org.springframework.data.mongodb.repository.MongoRepository;
