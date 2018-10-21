@@ -1,18 +1,21 @@
-package com.belatrixsf.findpatternapi.helpers;
+package com.belatrixsf.findpatternapi.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ *
+ */
 @Document
 public class  RegexModel {
 	
 	@Id
 	private Integer id;
 	private String description;
-	private String value;
-	
-	
-	
+	private String value;	
 	
 	public RegexModel() {
 		super();

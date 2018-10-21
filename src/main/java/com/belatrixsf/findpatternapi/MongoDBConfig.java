@@ -6,17 +6,14 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import com.belatrixsf.findpatternapi.repositories.RegexRepository;
 
 
-
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ *
+ */
 @EnableMongoRepositories(basePackageClasses = RegexRepository.class)
 @Configuration
 public class MongoDBConfig {	
-
-    /*@Bean
-    CommandLineRunner commandLineRunner(RegexRepository regexRepository) {
-        return strings -> {
-        	regexRepository.save(new RegexModel(3, "des 3", "Development"));
-        	regexRepository.save(new RegexModel(4, "des 4", "Operations"));
-        };
-    }*/
 
 }
