@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.belatrixsf.findpatternapi.helpers.Utility;
-import com.belatrixsf.findpatternapi.model.ClientPattern;
 import com.belatrixsf.findpatternapi.model.Message;
 import com.belatrixsf.findpatternapi.service.ICrawlingURL;
 
@@ -21,7 +20,6 @@ import com.belatrixsf.findpatternapi.service.ICrawlingURL;
  * @author Alexander Chiran
  * paulo.alexander12@gmail.com
  * 
- *
  */
 @RestController
 @RequestMapping("/process")
@@ -38,20 +36,20 @@ public class FindPatternRestController {
 	 * @param clientPattern
 	 * @return
 	 */
-
-	@RequestMapping(value = "/url", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = {
+	
+	@RequestMapping(value = "/url/{id}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<Message> processurl(@RequestBody ClientPattern clientPattern) {
+	public ResponseEntity<Message> processurl(@PathVariable("id") Integer id) {
 		Message message = null;
 		try {
 
-			logger.info("regexr enviado " + clientPattern.getRegexr());
+			logger.info("regexr enviado " + id);
 
 			/**
 			 * validation that lets you know if a non-zero string is coming
 			 */
-			if (clientPattern.getRegexr() != null) {
-				crawlingURL.exploreFile(clientPattern.getRegexr());
+			if (id != null) {
+				crawlingURL.exploreFile(id);
 				message = new Message(Utility.CODE_OK, Utility.MESSAGE_OK);
 				return new ResponseEntity<Message>(message, HttpStatus.OK);
 			} else {

@@ -10,8 +10,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * 
- * @author Alexander Chiran paulo.alexander12@gmail.com
- * 
+ * @author Alexander Chiran 
+ * paulo.alexander12@gmail.com
+ *  * 
  *
  */
 @SpringBootApplication
@@ -23,6 +24,10 @@ public class FindPatternApiApplication {
 		SpringApplication.run(FindPatternApiApplication.class, args);
 	}
 
+	/**
+	 * Configuration the threads
+	 * @return
+	 */
 	@Bean
 	public Executor asyncExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

@@ -7,6 +7,7 @@ package com.belatrixsf.findpatternapi.repositories;
  * paulo.alexander12@gmail.com
  * 
  *
+ *
  */
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

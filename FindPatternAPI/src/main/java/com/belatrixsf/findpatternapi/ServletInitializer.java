@@ -8,7 +8,6 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author Alexander Chiran
  * paulo.alexander12@gmail.com
  * 
- * 
  *
  */
 public class ServletInitializer extends SpringBootServletInitializer {

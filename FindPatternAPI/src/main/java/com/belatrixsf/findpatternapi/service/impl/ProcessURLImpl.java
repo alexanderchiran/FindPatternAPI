@@ -13,6 +13,12 @@ import com.belatrixsf.findpatternapi.helpers.HttpUtility;
 import com.belatrixsf.findpatternapi.helpers.Transformation;
 import com.belatrixsf.findpatternapi.service.IProcessURL;
 
+/**
+ * 
+ * @author Alexander Chiran
+ * paulo.alexander12@gmail.com
+ * 
+ */
 @Service
 public class ProcessURLImpl implements IProcessURL {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -22,7 +28,7 @@ public class ProcessURLImpl implements IProcessURL {
 	private HttpUtility httpUtility = new HttpUtility();
 
 	/**
-	 * 
+	 * Process asynchronous
 	 */
 	@Async
 	public void processURL(String url, List<String> notsslUrls, String regexr) {

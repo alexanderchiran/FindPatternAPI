@@ -13,12 +13,12 @@ import com.belatrixsf.findpatternapi.helpers.FileUtility;
 import com.belatrixsf.findpatternapi.model.RegexModel;
 import com.belatrixsf.findpatternapi.repositories.RegexRepository;
 import com.belatrixsf.findpatternapi.service.ICrawlingURL;
+import com.belatrixsf.findpatternapi.service.IProcessURL;
 
 /**
  * 
  * @author Alexander Chiran paulo.alexander12@gmail.com
  * 
- *
  */
 @Service
 public class CrawlingURLImpl implements ICrawlingURL {
@@ -28,7 +28,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 	private RegexRepository regexRepository;
 
 	@Autowired
-	private ProcessURLImpl processURLImpl;
+	private IProcessURL iProcessURL;
 	
 
 	private FileUtility fileUtility = new FileUtility();
@@ -81,7 +81,7 @@ public class CrawlingURLImpl implements ICrawlingURL {
 		try {
 			if (listURL != null) {
 				for (String url : listURL) {
-					processURLImpl.processURL(url, notsslUrls, regexr);
+					iProcessURL.processURL(url, notsslUrls, regexr);
 				}
 			}
 		} catch (Exception e) {

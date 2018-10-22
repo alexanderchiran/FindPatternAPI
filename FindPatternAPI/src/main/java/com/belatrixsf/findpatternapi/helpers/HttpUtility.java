@@ -16,13 +16,14 @@ import org.slf4j.LoggerFactory;
  * @author Alexander Chiran
  * paulo.alexander12@gmail.com
  * 
+ * 
  *
  */
 public class HttpUtility {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	/**
-	 * 
+	 * get content url
 	 * @param url
 	 * @return
 	 */

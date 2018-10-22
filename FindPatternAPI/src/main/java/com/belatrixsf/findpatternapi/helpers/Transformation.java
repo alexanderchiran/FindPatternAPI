@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author Alexander Chiran
  * paulo.alexander12@gmail.com
  * 
+ * 
  *
  */
 
@@ -22,7 +23,7 @@ public class Transformation {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	/**
-	 * 
+	 * change protocol
 	 * @param listURL
 	 * @return
 	 */
@@ -41,7 +42,7 @@ public class Transformation {
 	}
 	
 	/**
-	 * 
+	 * change protocol
 	 * @param url
 	 * @return
 	 */

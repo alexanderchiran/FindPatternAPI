@@ -6,6 +6,7 @@ package com.belatrixsf.findpatternapi.service;
  * paulo.alexander12@gmail.com
  * 
  *
+ *
  */
 public interface ICrawlingURL {
 
