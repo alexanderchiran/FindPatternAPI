@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="NovedadViewDlg" widgetVar="NovedadViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewNovedadTitle}">
+            <h:form id="NovedadViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{novedadController.selected != null}">
+                        <h:outputText value="#{bundle.ViewNovedadLabel_descripcion}"/>
+                        <h:outputText value="#{novedadController.selected.descripcion}" title="#{bundle.ViewNovedadTitle_descripcion}"/>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_idProducto}"/>
+                        <h:outputText value="#{novedadController.selected.idProducto.codigo}&nbsp;-&nbsp;#{novedadController.selected.idProducto.descripcion}" title="#{bundle.ViewNovedadTitle_idProducto}"/>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_idTienda}"/>
+                        <h:outputText value="#{novedadController.selected.idTienda.descripcion}" title="#{bundle.ViewNovedadTitle_idTienda}"/>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_cantidad}"/>
+                        <h:outputText value="#{novedadController.selected.cantidad}" title="#{bundle.ViewNovedadTitle_cantidad}"/>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_costoUnitario}"/>
+                        <h:outputText value="#{novedadController.selected.costoUnitario}" title="#{bundle.ViewNovedadTitle_costoUnitario}"/>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_costoTotal}"/>
+                        <h:outputText value="#{novedadController.selected.costoTotal}" title="#{bundle.ViewNovedadTitle_costoTotal}"/>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_fechaNovedad}"/>
+                        <h:outputText value="#{novedadController.selected.fechaNovedad}" title="#{bundle.ViewNovedadTitle_fechaNovedad}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewNovedadLabel_idTipoNovedad}"/>
+                        <h:outputText value="#{novedadController.selected.idTipoNovedad.descripcion}" title="#{bundle.ViewNovedadTitle_idTipoNovedad}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="P(FNovedadViewDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

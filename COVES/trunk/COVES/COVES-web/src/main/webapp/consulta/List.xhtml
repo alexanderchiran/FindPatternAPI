@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{bundle.TitleConsultaVentas}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="ConsultaForm" >
+
+                <p:blockUI block="ConsultaForm" trigger="buscar">
+                    #{bundle.labelProcesando}<br />
+                    <p:graphicImage  name="img/loading.gif"/>
+                </p:blockUI>
+                <p:panel id="panelConsultas" header="#{bundle.ConsultaVentas}">
+                    <h:panelGroup id="display" layout="block">
+                        <p:panelGrid columns="2"> 
+
+                            <p:outputLabel value="#{bundle.FechaInicioConsulta}" for="fechaInicio" />
+                            <p:calendar id="fechaInicio" pattern="dd/MM/yyyy" value="#{consultaController.consulta.fechaInicio}" title="#{bundle.FechaInicioConsulta}"  showOn="button" size="23"/>
+                            <p:outputLabel value="#{bundle.FechaFinConsulta}" for="fechaFin" />
+                            <p:calendar id="fechaFin" pattern="dd/MM/yyyy" value="#{consultaController.consulta.fechaFin}" title="#{bundle.FechaFinConsulta}"  showOn="button" size="23"/>
+
+
+                            <p:outputLabel value="#{bundle.ProductoConsulta}" for="idProducto" />
+                            <p:selectOneMenu id="idProducto" style="width: 300px" value="#{consultaController.consulta.codProducto}" >
+                                <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="#{bundle.TodosProductos}" itemValue="-1"/>
+                                <f:selectItems value="#{productoController.itemsAvailableSelectOne}"
+                                               var="idProductoItem"
+                                               itemLabel="#{idProductoItem.codigo}&nbsp;-&nbsp;#{idProductoItem.descripcion}"
+                                               itemValue="#{idProductoItem.idProducto}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="#{bundle.TiendaConsulta}" for="idTienda" />
+                            <p:selectOneMenu id="idTienda" style="width: 300px" value="#{consultaController.consulta.codTienda}" >
+                                <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="#{bundle.TodasTiendas}" itemValue="-1"/>                                
+                                <f:selectItems value="#{tiendaController.itemsAvailableSelectOne}"
+                                               var="idTiendaItem"
+                                               itemLabel="#{idTiendaItem.descripcion}"
+                                               itemValue="#{idTiendaItem.idTienda}"/>
+                            </p:selectOneMenu>                        
+                        </p:panelGrid>                        
+                    </h:panelGroup>
+                    <f:facet name="footer">
+                        <p:commandButton id="buscar" action="#{consultaController.consultarVentas}" value="#{bundle.Consulta}" update="ConsultaForm,:growl,descargar,datalist"/>
+
+                        <h:commandLink id="descargar" rendered="#{not empty consultaController.items}">
+                            <p:graphicImage name="/img/excel.jpg" />
+                            <p:dataExporter type="xls" target="datalist" fileName="ventas" pageOnly="true"/>
+                        </h:commandLink>
+                    </f:facet>
+                </p:panel>
+
+                <p:panel header="#{bundle.ListaVentas}" rendered="#{not empty consultaController.items}">
+                    <p:dataTable id="datalist" value="#{consultaController.items}" var="item"
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50,100,500"
+                                 > 
+                        <h:commandLink value="Exportar">                        
+                            <p:dataExporter type="csv" target="datalist" fileName="ListadoVentas" />
+                        </h:commandLink>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.CodProducto}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.producto.codigo}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.DesProducto}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.producto.descripcion}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.CantidadPro}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.cantidad}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.CreateCompraTitle_costoUnitario}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.costoUnitario}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.CostoTotal}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.costoTotal}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.precioUdeVenta}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.precioPromedioVenta}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.CostoTotalVenta}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.precioVentaTotal}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.Ganancia}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.gananciaUnitario}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <p:panel header="#{bundle.ResumenDatos}" rendered="#{not empty consultaController.items}">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="#{bundle.SumCostoTotal}" styleClass="negrita"/>
+                        <h:outputText value="#{consultaController.totales.costoTotal}" styleClass="negrita">
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        <h:outputText value="#{bundle.SumVentaTotal}" styleClass="negrita"/>
+                        <h:outputText value="#{consultaController.totales.ventaTotal}" styleClass="negrita" >
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        <h:outputText value="#{bundle.GananciaTotal}" styleClass="negrita"/>
+                        <h:outputText value="#{consultaController.totales.gananciaTotal}" styleClass="negrita">
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                    </p:panelGrid>
+                </p:panel>                                
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

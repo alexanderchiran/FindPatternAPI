@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="NovedadEditDlg" widgetVar="NovedadEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditNovedadTitle}">
+            <h:form id="NovedadEditForm">
+                <p:remoteCommand  name="calcular" update="costoTotal" actionListener="#{novedadController.calculateCostTotal()}"  />                                                            
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{novedadController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_descripcion}" for="descripcion" />
+                        <p:inputText id="descripcion" value="#{novedadController.selected.descripcion}" title="#{bundle.EditNovedadTitle_descripcion}" />
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_idProducto}" for="idProducto" />
+                        <p:selectOneMenu id="idProducto" value="#{novedadController.selected.idProducto}" disabled="true">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true"/>
+                            <f:selectItems value="#{productoController.itemsAvailableSelectOne}"
+                                           var="idProductoItem"
+                                           itemLabel="#{idProductoItem.codigo}&nbsp;-&nbsp;#{idProductoItem.descripcion}"
+                                           itemValue="#{idProductoItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_idTienda}" for="idTienda"/>
+                        <p:selectOneMenu id="idTienda" value="#{novedadController.selected.idTienda}" disabled="true" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true"/>
+                            <f:selectItems value="#{tiendaController.itemsAvailableSelectOne}"
+                                           var="idTiendaItem"
+                                           itemLabel="#{idTiendaItem.descripcion}"
+                                           itemValue="#{idTiendaItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_cantidad}" for="cantidad" />
+                        <p:inputNumber id="cantidad" onblur="calcular()" value="#{novedadController.selected.cantidad}" title="#{bundle.EditNovedadTitle_cantidad}" />
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_costoUnitario}" for="costoUnitario" />
+                        <p:inputNumber id="costoUnitario" onblur="calcular()" value="#{novedadController.selected.costoUnitario}" title="#{bundle.EditNovedadTitle_costoUnitario}" />
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_costoTotal}" for="costoTotal" />
+                        <p:inputNumber id="costoTotal" value="#{novedadController.selected.costoTotal}" title="#{bundle.EditNovedadTitle_costoTotal}" />
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_fechaNovedad}" for="fechaNovedad" />
+                        <p:calendar id="fechaNovedad" pattern="dd/MM/yyyy" value="#{novedadController.selected.fechaNovedad}" title="#{bundle.EditNovedadTitle_fechaNovedad}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditNovedadLabel_idTipoNovedad}" for="idTipoNovedad" />
+                        <p:selectOneMenu id="idTipoNovedad" value="#{novedadController.selected.idTipoNovedad}" disabled="true" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true"/>
+                            <f:selectItems value="#{tipoNovedaController.itemsAvailableSelectOne}"
+                                           var="idTipoNovedadItem"
+                                           itemLabel="#{idTipoNovedadItem.descripcion}"
+                                           itemValue="#{idTipoNovedadItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{novedadController.update}" value="#{bundle.Save}" update="display,:NovedadListForm:datalist,:growl" oncomplete="handleSubmit(args, 'NovedadEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF(NovedadEditDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

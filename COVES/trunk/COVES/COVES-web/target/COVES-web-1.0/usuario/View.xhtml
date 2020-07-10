@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:composition>
+
+        <p:dialog id="UsuarioViewDlg" widgetVar="UsuarioViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewUsuarioTitle}">
+            <h:form id="UsuarioViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usuarioController.selected != null}">
+                        <h:outputText value="#{bundle.ViewUsuarioLabel_nombres}"/>
+                        <h:outputText value="#{usuarioController.selected.nombres}" title="#{bundle.ViewUsuarioTitle_nombres}"/>
+                        <h:outputText value="#{bundle.ViewUsuarioLabel_apellidos}"/>
+                        <h:outputText value="#{usuarioController.selected.apellidos}" title="#{bundle.ViewUsuarioTitle_apellidos}"/>
+                        <h:outputText value="#{bundle.ViewUsuarioLabel_idTipoIdentificacion}"/>
+                        <h:outputText value="#{usuarioController.selected.idTipoIdentificacion.descripcion}" title="#{bundle.ViewUsuarioTitle_idTipoIdentificacion}"/>
+                        <h:outputText value="#{bundle.ViewUsuarioLabel_identificacion}"/>
+                        <h:outputText value="#{usuarioController.selected.identificacion}" title="#{bundle.ViewUsuarioTitle_identificacion}"/>
+                        <h:outputText value="#{bundle.NombreUsuarioCrear}"/>
+                        <h:outputText value="#{usuarioController.selected.usuario}" title="#{bundle.NombreUsuario}"/>                        
+                        <h:outputText value="#{bundle.ViewUsuarioLabel_estado}"/>
+                        <h:outputText value="Inactivo" rendered="${usuarioController.selected.estado eq 'I'}"/>
+                        <h:outputText value="Activo" rendered="${usuarioController.selected.estado eq 'A'}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="PF(UsuarioViewDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

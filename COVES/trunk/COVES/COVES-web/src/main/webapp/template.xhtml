@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <link rel="SHORTCUT ICON"
+              href="${request.contextPath}/resources/img/chart_accept.ico" />
+        <title><ui:insert name="title">Control de Ventas</ui:insert></title>       
+        <h:outputStylesheet library="css" name="font-awesome.css" />
+        <h:outputScript library="js" name="jsfcrud.js"/>
+    </h:head>
+
+    <h:body>
+
+        <p:growl id="growl" life="10000" />
+
+        <h:form id="menuForm">
+            <p:commandLink  action="#{navegacion.irAPrincipal}"    title="Ir al Inicio" >
+                <p:graphicImage name="img/home.png"/>
+            </p:commandLink>
+            <p:spacer width="10"/>
+            <p:commandLink  action="#{navegacion.irAFacturar}"  title="Facturar" >
+                <p:graphicImage name="img/sale.png"/>
+            </p:commandLink>
+            <p:spacer width="10"/>
+            <p:commandLink  action="#{navegacion.irACompras}" rendered="#{inicioSesion.esAdministrador}"    title="Compras" >
+                <p:graphicImage name="img/shopping_cart.png"/>
+            </p:commandLink>
+            <p:spacer width="10"/>
+            <p:commandLink  action="#{navegacion.irAinventario}" rendered="#{inicioSesion.esAdministrador}"    title="Inventario Global" >
+                <p:graphicImage name="img/chart_pie.png"/>
+            </p:commandLink>
+
+            <p:menubar model="#{inicioSesion.model.menu}" >
+                <f:facet name="options">
+                    <h:graphicImage library="img" name="user.png"/>&nbsp;
+                    <p:outputLabel value="#{bundle.menuBienvenido} #{inicioSesion.model.nombre}" />&nbsp;&nbsp;
+                    <p:commandButton  action="#{inicioSesion.cerrarSesion}"  value="#{msg.MenuCerrarSesion}" title="Cerrar Sesión" icon="ui-icon-myLogout" />
+                </f:facet>
+            </p:menubar>
+        </h:form>
+
+        <ui:insert name="body"/>
+    </h:body>
+
+</html>

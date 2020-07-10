@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsuarioRolCreateDlg" widgetVar="UsuarioRolCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateUsuarioRolTitle}">
+            <h:form id="UsuarioRolCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usuarioRolController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateUsuarioRolLabel_idRol}" for="idRol" />
+                        <p:selectOneMenu id="idRol" value="#{usuarioRolController.selected.idRol}" required="true" requiredMessage="#{bundle.EditUsuarioRolRequiredMessage_idRol}">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true"/>
+                            <f:selectItems value="#{rolController.itemsAvailableSelectOne}"
+                                           var="idRolItem"
+                                           itemLabel="#{idRolItem.nombre}"
+                                           itemValue="#{idRolItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateUsuarioRolLabel_idUsuario}" for="idUsuario" />
+                        <p:selectOneMenu id="idUsuario" value="#{usuarioRolController.selected.idUsuario}" required="true" requiredMessage="#{bundle.EditUsuarioRolRequiredMessage_idUsuario}" effect="fold" style="width: 111px">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true"/>
+                            <f:selectItems value="#{usuarioController.itemsAvailableSelectOne}"
+                                           var="idUsuarioItem"
+                                           itemLabel="#{idUsuarioItem.usuario}"
+                                           itemValue="#{idUsuarioItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{usuarioRolController.create}" value="#{bundle.Save}" update="display,:UsuarioRolListForm:datalist,:growl" oncomplete="handleSubmit(args,'UsuarioRolCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF(UsuarioRolCreateDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

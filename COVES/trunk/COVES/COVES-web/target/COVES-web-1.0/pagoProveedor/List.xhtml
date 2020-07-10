@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListPagoProveedorTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form id="PagoProveedorListForm">
+
+                <p:blockUI block="PagoProveedorListForm" trigger="datalist">
+                    #{bundle.labelProcesando}<br />
+                    <p:graphicImage  name="img/loading.gif"/>
+                </p:blockUI>
+                <p:remoteCommand name="consultarPagos"
+                                 action="#{pagoProveedorController.consultarPagos}" 
+                                 update=":DetallePagoListForm" />
+                <p:panel header="#{bundle.ListPagoProveedorTitle}">
+                    <p:dataTable id="datalist" value="#{pagoProveedorController.items}" var="item"
+                                 selectionMode="single" selection="#{pagoProveedorController.selected}"
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 rowKey="#{item.idPagoProveedor}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50,100,500">
+
+                        <p:ajax event="rowSelect" oncomplete="consultarPagos()" update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" oncomplete="consultarPagos()" update="createButton viewButton editButton deleteButton"/>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPagoProveedorTitle_idProveedor}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.idProveedor.razonsocial}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPagoProveedorTitle_numeroFactura}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.numeroFactura}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPagoProveedorTitle_valorTotal}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.valorTotal}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPagoProveedorTitle_valorPagado}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.valorPagado}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPagoProveedorTitle_fechaFactura}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.fechaFactura}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{pagoProveedorController.prepareCreate}" update=":PagoProveedorCreateForm" oncomplete="PF('PagoProveedorCreateDialog').show()"/>
+                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}" update=":PagoProveedorViewForm" oncomplete="PF('PagoProveedorViewDialog').show()" disabled="#{empty pagoProveedorController.selected}"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":PagoProveedorEditForm" oncomplete="PF('PagoProveedorEditDialog').show()" disabled="#{empty pagoProveedorController.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="#{bundle.Delete}" actionListener="#{pagoProveedorController.destroy}" update=":growl,datalist" disabled="#{empty pagoProveedorController.selected}">
+                                <p:confirm header="Confirmación" message="#{bundle.eliminarReg}" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+
+            <ui:include src="Create.xhtml"/>
+            <ui:include src="Edit.xhtml"/>
+            <ui:include src="View.xhtml"/>
+
+            <h:form id="DetallePagoListForm">
+                <p:panel header="#{bundle.ListDetallePagoTitle}">
+                    <p:dataTable id="datalist" value="#{detallePagoController.items}" var="item"
+                                 rendered="#{!empty pagoProveedorController.selected}"
+                                 emptyMessage="#{bundle.sinRegistros}"
+                                 selectionMode="single" selection="#{detallePagoController.selected}"                                 
+                                 rowKey="#{item.idDetallePago}"                               >
+
+                        <p:ajax event="rowSelect"   update="createButton viewButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton viewButton editButton deleteButton"/>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListDetallePagoTitle_valorAbono}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.valorAbono}">
+                                <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListDetallePagoTitle_fechaAbono}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.fechaAbono}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{bundle.Create}" actionListener="#{detallePagoController.prepareCreate}" update=":DetallePagoCreateForm" oncomplete="PF('DetallePagoCreateDialog').show()"/>
+                            <p:commandButton id="viewButton"   icon="ui-icon-search" value="#{bundle.View}"  oncomplete="PF('DetallePagoViewDialog').show()" update=":DetallePagoViewForm"  disabled="#{empty detallePagoController.selected}"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="#{bundle.Edit}" update=":DetallePagoEditForm" oncomplete="PF('DetallePagoEditDialog').show()" disabled="#{empty detallePagoController.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="#{bundle.Delete}" actionListener="#{detallePagoController.destroy}" update=":growl,datalist,:DetallePagoCreateForm" disabled="#{empty detallePagoController.selected}" oncomplete="sumarPagos1()">
+                                <p:confirm header="Confirmación" message="está seguro de eliminar el pago?" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+                 <p:remoteCommand name="sumarPagos1"
+                                 action="#{pagoProveedorController.actualizarValorPagado}" 
+                                 update=":PagoProveedorListForm" />
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="NO" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+
+            <ui:include src="CreateDetalle.xhtml"/>
+            <ui:include src="EditDetalle.xhtml"/>
+            <ui:include src="ViewDetalle.xhtml"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

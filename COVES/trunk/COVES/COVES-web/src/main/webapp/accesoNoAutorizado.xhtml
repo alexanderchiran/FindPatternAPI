@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/templateNoMenu.xhtml">
+    <ui:define name="body">
+        <h:form id="frmPrincipal" >
+            <h:panelGrid id="pnlBotones" columns="1" style="width: 100%;">
+                <f:facet name="header">
+                     <p:spacer width="10" height="150" />
+                    <h:graphicImage library="img" name="accesoFail.png"/>
+                    <br/>
+                    <p:outputLabel value="#{bundle.accesoDenegado}" style="font-size: 40px; color: red"></p:outputLabel> 
+                     <br/>
+                    <p:commandButton value="#{bundle.iniciarSesion}" action="#{inicioSesion.cerrarSesion}"  />
+                    <br/>
+                </f:facet>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>

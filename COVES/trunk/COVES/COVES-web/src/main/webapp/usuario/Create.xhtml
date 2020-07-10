@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UsuarioCreateDlg" widgetVar="UsuarioCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateUsuarioTitle}">
+            <h:form id="UsuarioCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{usuarioController.selected != null}">
+                        
+                        <p:outputLabel value="#{bundle.NombreUsuarioCrear}" for="usuario" />
+                        <p:inputText id="usuario" value="#{usuarioController.selected.usuario}" title="Usuario Corto" />
+                        
+                        <p:outputLabel value="#{bundle.ClaveUsuario}" for="clave" />
+                        <p:password  id="clave" value="#{usuarioController.selected.clave}" title="Clave" />
+                       
+                        
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_nombres}" for="nombres" />
+                        <p:inputText id="nombres" value="#{usuarioController.selected.nombres}" title="#{bundle.CreateUsuarioTitle_nombres}" />
+                        
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_apellidos}" for="apellidos" />
+                        <p:inputText id="apellidos" value="#{usuarioController.selected.apellidos}" title="#{bundle.CreateUsuarioTitle_apellidos}" />
+                       
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_idTipoIdentificacion}" for="idTipoIdentificacion" />
+                        <p:selectOneMenu id="idTipoIdentificacion" value="#{usuarioController.selected.idTipoIdentificacion}" style="width: 133px">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true"/>
+                            <f:selectItems value="#{tipoIdentificacionController.itemsAvailableSelectOne}"
+                                           var="idTipoIdentificacionItem"
+                                           itemLabel="#{idTipoIdentificacionItem.descripcion}"
+                                           itemValue="#{idTipoIdentificacionItem}"/>
+                        </p:selectOneMenu>
+                        
+                        
+                        <p:outputLabel value="#{bundle.CreateUsuarioLabel_identificacion}" for="identificacion" />
+                        <p:inputText id="identificacion" value="#{usuarioController.selected.identificacion}" title="#{bundle.CreateUsuarioTitle_identificacion}" />
+                       
+                        <p:outputLabel for="estado" value="#{bundle.CreateUsuarioLabel_estado}" />
+                        <p:selectOneRadio id="estado" value="#{usuarioController.selected.estado}">
+                            <f:selectItem itemLabel="Activo" itemValue="A" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{usuarioController.create}" value="#{bundle.Save}" update="display,:UsuarioListForm:datalist,:growl" oncomplete="handleSubmit(args,'UsuarioCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF(UsuarioCreateDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

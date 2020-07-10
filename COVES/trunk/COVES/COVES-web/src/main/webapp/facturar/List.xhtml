@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListFacturaTitle}"></h:outputText>
+        </ui:define>FacturaListForm
+
+        <ui:define name="body">
+            <p:growl id="grow2" life="10000" />
+            <h:form id="FacturaListForm">
+                <ui:remove>--------------------------------------cabecera--------------------------</ui:remove>
+                <p:panelGrid columns="4" >
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_numeroFactura}" for="numeroFactura" />
+                    <p:inputText disabled="#{facturarController.model.deshabilitar}" 
+                                 id="numeroFactura"
+                                 style="width: 200px" 
+                                 readonly="true" 
+                                 value="#{facturarController.selected.numeroFactura}" 
+                                 title="#{bundle.CreateFacturaTitle_numeroFactura}" />
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_tipoPago}" for="tipoPago" />
+                    <p:inputText id="tipoPago" 
+                                 disabled="#{facturarController.model.deshabilitar}" 
+                                 value="#{facturarController.selected.tipoPago}"
+                                 title="#{bundle.CreateFacturaTitle_tipoPago}" />
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_subtotal}" for="subtotal" />
+                    <p:inputText id="subtotal"
+                                 disabled="#{facturarController.model.deshabilitar}" 
+                                 style="width: 200px" 
+                                 value="#{facturarController.selected.subtotal}" 
+                                 title="#{bundle.CreateFacturaTitle_subtotal}" >
+                        <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_iva}" for="iva" />
+                    <p:inputText id="iva" 
+                                 disabled="#{facturarController.model.deshabilitar}" 
+                                 value="#{facturarController.selected.iva}" 
+                                 title="#{bundle.CreateFacturaTitle_iva}" >
+                        <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_total}" styleClass="negrita" for="total" />
+                    <p:inputText id="total" 
+                                 style="width: 200px" 
+                                 styleClass="negrita"
+                                 disabled="#{facturarController.model.deshabilitar}" 
+                                 value="#{facturarController.selected.total}" 
+                                 title="#{bundle.CreateFacturaTitle_total}" >
+                        <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_efectivo}" for="efectivo" />
+                    <p:inputNumber id="efectivo" 
+                                   decimalSeparator="," thousandSeparator="."
+                                   disabled="#{facturarController.model.deshabilitar}" 
+                                   onblur="calcularCambio()" 
+                                   value="#{facturarController.selected.efectivo}"                                    
+                                   decimalPlaces="0"/>
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_cambio}" for="cambio" />
+                    <p:inputText id="cambio" 
+                                 disabled="#{facturarController.model.deshabilitar}" 
+                                 style="width: 200px" 
+                                 value="#{facturarController.selected.cambio}" 
+                                 title="#{bundle.CreateFacturaTitle_cambio}" >
+                        <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="#{bundle.CreateFacturaLabel_idCliente}" for="idCliente" />
+                    <p:column>
+                        <p:selectOneMenu id="idCliente" 
+                                         value="#{facturarController.selected.idCliente}"
+                                         disabled="#{facturarController.model.deshabilitar}" 
+                                         filter="true" 
+                                         filterMatchMode="contains"
+                                         style="width: 300px">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                            <f:selectItems value="#{clienteController.itemsAvailableSelectOne}"
+                                           var="idClienteItem"
+                                           itemLabel="#{idClienteItem.identificacion} #{idClienteItem.nombres} #{idClienteItem.apellidos}"
+                                           itemValue="#{idClienteItem}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton id="createButton"
+                                         icon="ui-icon-plus"  
+                                         value="..." 
+                                         title="Agregar cliente" 
+                                         disabled="#{facturarController.model.deshabilitar}" 
+                                         actionListener="#{clienteController.prepareCreate}" update=":ClienteCreateForm" oncomplete="PF('ClienteCreateDialog').show()"/>
+                    </p:column>
+
+
+                    <p:outputLabel value="#{bundle.CreateCompraLabel_idTienda}" for="idTienda" />
+                    <p:selectOneMenu id="idTienda" 
+                                     style="width: 200px" 
+                                     disabled="#{facturarController.model.deshabilitar}" 
+                                     value="#{facturarController.model.tiendaSeleccionada}" >
+                        <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                        <f:selectItems value="#{tiendaController.itemsAvailableSelectOne}"
+                                       var="idTiendaItem"                                       
+                                       itemLabel="#{idTiendaItem.descripcion}"
+                                       itemValue="#{idTiendaItem}"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <ui:remove>--------------------------------------fin cabecera--------------------------</ui:remove>
+                <p:spacer height="10"/>
+                <p:dialog header="Cargando..." widgetVar="block" resizable="false"
+                          modal="true" appendTo="@(body)" closable="false">
+                    <p:graphicImage value="/resources/img/loading.gif" height="50px" />
+                </p:dialog>
+
+                <p:remoteCommand name="reglaFactura" action="#{facturarController.reglaFactura}"
+                                 update="precioUnitario" oncomplete="PF('block').hide();"
+                                 onstart="PF('block').show();" />
+                <p:remoteCommand  name="calcularCambio" update="cambio" actionListener="#{facturarController.calcularCambio}"  />  
+                <p:remoteCommand  name="calcular" update="precioTotal" actionListener="#{facturarController.calcular}"  />  
+
+                <ui:remove>--------------------------------------producto--------------------------</ui:remove>
+                <p:panel >
+                    <p:outputLabel value="Producto: " />
+
+                    <p:selectOneMenu id="producto" value="#{facturarController.model.productoSeleccionado}"
+                                     filter="true" filterMatchMode="contains"
+                                     style="width: 300px">
+                        <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                        <f:selectItems value="#{facturarController.model.listaProducto}"
+                                       var="producto"
+                                       itemLabel="#{producto.codigo} #{producto.descripcion}"
+                                       itemValue="#{producto}"/>
+                        <p:ajax event="change"
+                                oncomplete="reglaFactura()" />
+                    </p:selectOneMenu>
+
+                    <p:spacer width="10"/>
+                    <p:outputLabel value="Cantidad: " />
+                    <p:inputNumber id="cantidad" style="width: 40px"  minValue="1" decimalSeparator="," thousandSeparator="." decimalPlaces="0" onblur="calcular()" value="#{facturarController.model.cantidad}" />
+
+                    <p:spacer width="10"/>
+                    <p:outputLabel value="Precio Unitario: " />
+                    <p:inputNumber id="precioUnitario" minValue="1" decimalSeparator="," thousandSeparator="." onblur="calcular()" value="#{facturarController.model.precioUnitario}" decimalPlaces="0"/>  
+
+                    <p:spacer width="10"/>
+                    <p:outputLabel value="Precio Total: " />
+                    <p:inputNumber id="precioTotal" readonly="true" decimalSeparator="," thousandSeparator="."  value="#{facturarController.model.precioTotal}" decimalPlaces="0"/>  
+
+                    <p:spacer width="10"/>
+                    <p:commandButton 
+                        disabled="#{facturarController.model.deshabilitar}" 
+                        actionListener="#{facturarController.agregarProducto}" 
+                        value="Agregar Producto"
+                        update=":growl, FacturaListForm" />
+                </p:panel>
+                <ui:remove>--------------------------------------detalles--------------------------</ui:remove>
+                <p:dataTable id="datalist"
+                             value="#{facturarController.model.listaFacturaDetalle}" 
+                             var="item"
+                             selectionMode="single" 
+                             selection="#{facturarController.model.facturaDetalleSel}"                            
+                             rowKey="#{item.idTemp}" >
+
+                    <p:ajax event="rowSelect"   update="deleteButton"/>
+                    <p:ajax event="rowUnselect" update="deleteButton"/>
+
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListFacturaDetalleTitle_idProducto}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.idProducto.codigo} - #{item.idProducto.descripcion}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListFacturaDetalleTitle_cantidad}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.cantidad}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListFacturaDetalleTitle_precioUnitario}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.precioUnitario}">
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListFacturaDetalleTitle_precioTotal}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.precioTotal}">
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                    </p:column> 
+
+                    <f:facet name="footer">
+                        <p:commandButton id="deleteButton" 
+                                         icon="ui-icon-trash"  
+                                         value="#{bundle.Delete}" 
+                                         actionListener="#{facturarController.quitarProducto}" 
+                                         oncomplete="calcularCambio()"
+                                         update=":growl,FacturaListForm" 
+                                         disabled="#{empty facturarController.model.facturaDetalleSel or facturarController.model.deshabilitar}"/>
+                    </f:facet>
+                </p:dataTable>
+
+
+                <p:commandButton id="idfacturar" 
+                                 disabled="#{facturarController.model.deshabilitar}"
+                                 actionListener="#{facturarController.facturar}" 
+                                 value="#{bundle.facturar}" 
+                                 update=":grow2, FacturaListForm" >
+                    <p:confirm header="Confirmación" message="Total: #{facturarController.selected.total}. Está seguro que desea Facturar?" icon="ui-icon-alert" />
+                </p:commandButton>
+
+                <p:commandButton id="idImprimir"
+                                 actionListener="#{facturarController.imprimir}"                                  
+                                 disabled="#{!facturarController.model.deshabilitar}"                                 
+                                 value="Imprimir Factura" update=":grow2" >
+                </p:commandButton>
+
+                <p:commandButton id="idNuevaFac"
+                                 actionListener="#{facturarController.nuevaFactura}" 
+                                 disabled="#{!facturarController.model.deshabilitar}"
+                                 value="Nueva Factura" update=":grow2 FacturaListForm" >
+                </p:commandButton>
+
+                <p:blockUI block="FacturaListForm" trigger="idfacturar, idImprimir">
+                    #{msg.labelProcesando}<br />
+                    <p:graphicImage  name="img/loading.gif"/>
+                </p:blockUI>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+
+                <script type = 'text/javascript'>
+                    function imprimir(p1) {
+                        window.open('${request.contextPath}/faces/resources/reporte/'+p1, '_blank');
+                    }
+                </script>
+            </h:form> 
+
+            <ui:include src="CreateCliente.xhtml"/>
+        </ui:define>
+        
+    </ui:composition>
+
+</html>

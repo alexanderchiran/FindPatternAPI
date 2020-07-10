@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <style type="text/css">
+        .ui-selectonemenu label.ui-selectonemenu-label {
+            padding-right: 28px;
+            text-align: left;
+        }
+    </style>
+    <ui:composition>
+
+        <p:dialog id="MenuRolCreateDlg" widgetVar="MenuRolCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateMenuRolTitle}">
+            <h:form id="MenuRolCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{menuRolController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateMenuRolLabel_idMenu}" for="idMenu" />
+                        <p:selectOneMenu id="idMenu" value="#{menuRolController.selected.idMenu}"  >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                            <f:selectItems value="#{menuController.itemsAvailableSelectOne}"
+                                           var="idMenuItem"
+                                           itemLabel="#{idMenuItem.descripcion}"
+                                           itemValue="#{idMenuItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.CreateMenuRolLabel_idRol}" for="idRol" />
+                        <p:selectOneMenu id="idRol" value="#{menuRolController.selected.idRol}" effect="fold" style="width: 145px">
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}" noSelectionOption="true" />
+                            <f:selectItems value="#{rolController.itemsAvailableSelectOne}"
+                                           var="idRolItem"
+                                           itemLabel="#{idRolItem.nombre}"
+                                           itemValue="#{idRolItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{menuRolController.create}" value="#{bundle.Save}" update="display,:MenuRolListForm:datalist,:growl" oncomplete="handleSubmit(args,'MenuRolCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF(MenuRolCreateDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

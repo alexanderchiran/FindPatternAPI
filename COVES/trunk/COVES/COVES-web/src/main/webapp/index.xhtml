@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <link rel="SHORTCUT ICON"
+              href="${request.contextPath}/resources/img/chart_accept.ico" />
+        <title>Login</title>
+        <h:outputStylesheet library="css" name="font-awesome.css" />
+
+    </h:head>
+    <h:body styleClass="bodyLogin">
+        <h:form id="principal">     
+            <p:growl id="growl" showDetail="false" />     
+
+            <p:panel id="horizontal" styleClass="opacidad">
+
+                <h:outputText value="Moda Para Bebes" styleClass="titulo"/>
+                <p:spacer width="10" />
+                <h:outputLabel value="Usuario: "/>
+                <h:inputText  value="#{inicioSesion.model.usuario}" required="true" requiredMessage="Usuario campo requerido" />
+                <p:spacer width="10" />
+                <h:outputLabel value="Contraseña: "/>
+                <h:inputSecret  value="#{inicioSesion.model.clave}" required="true" requiredMessage="Contraseña campo requerido" />
+                <p:spacer width="10" />
+                <p:commandButton value="Iniciar Sesión" id="ingresar" update="growl"  action="#{inicioSesion.validarSesion}" />
+            </p:panel>
+
+
+            <p:blockUI block="principal" trigger="ingresar">
+                #{bundle.labelProcesando}<br />
+                <p:graphicImage  name="img/loading.gif"/>
+            </p:blockUI>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+        <p:dialog id="DistribuirDlg" widgetVar="DistribuirDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.DistribuirProductosTitle} ">
+            <h:form id="DistribuirForm" >
+                <h3> #{inventarioTiendaController.selected.idProducto.codigo} - #{inventarioTiendaController.selected.idProducto.descripcion}</h3>
+                <h:panelGroup id="display" >
+                    <p:panelGrid columns="1" rendered="#{inventarioTiendaController.selected != null}" style="width: 50%">
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ViewInventarioTiendaTitle_existencia} - #{inventarioTiendaController.selected.existencia}"/>                        
+                        </f:facet>
+                        <p:dataTable id="datalist" value="#{inventarioTiendaController.itemsTienda}" var="item">
+                            <p:ajax event="rowEdit" update=":DistribuirForm" />  
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Local"/>
+                                </f:facet>
+                                <h:outputText value="#{item.tienda.descripcion}"/>      
+                            </p:column>
+                            <p:column>
+                                 <f:facet name="header">
+                                    <h:outputText value="Valor a distribuir"/>
+                                </f:facet>
+                                <p:inputNumber value="#{item.cantidad}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{inventarioTiendaController.distribuirEnTiendasInventario}" value="#{bundle.Save}" update="display,:InventarioTiendaListForm:datalist,:growl"  />
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF('DistribuirDlg').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

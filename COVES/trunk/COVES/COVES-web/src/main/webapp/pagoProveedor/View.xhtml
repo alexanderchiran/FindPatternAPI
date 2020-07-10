@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="PagoProveedorViewDlg" widgetVar="PagoProveedorViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewPagoProveedorTitle}">
+            <h:form id="PagoProveedorViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{pagoProveedorController.selected != null}">
+                         <h:outputText value="#{bundle.ViewPagoProveedorLabel_idProveedor}"/>
+                         <h:outputText value="#{pagoProveedorController.selected.idProveedor.razonsocial}" title="#{bundle.ViewPagoProveedorTitle_idProveedor}"/>
+                
+                        <h:outputText value="#{bundle.ViewPagoProveedorLabel_numeroFactura}"/>
+                        <h:outputText value="#{pagoProveedorController.selected.numeroFactura}" title="#{bundle.ViewPagoProveedorTitle_numeroFactura}"/>
+                       
+                        <h:outputText value="#{bundle.ViewPagoProveedorLabel_valorTotal}"/>
+                        <h:outputText value="#{pagoProveedorController.selected.valorTotal}" title="#{bundle.ViewPagoProveedorTitle_valorTotal}">
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewPagoProveedorLabel_valorPagado}"/>
+                        <h:outputText value="#{pagoProveedorController.selected.valorPagado}" title="#{bundle.ViewPagoProveedorTitle_valorPagado}">
+                            <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewPagoProveedorLabel_fechaFactura}"/>
+                        <h:outputText value="#{pagoProveedorController.selected.fechaFactura}" title="#{bundle.ViewPagoProveedorTitle_fechaFactura}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                        
+                     
+                           </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="PF('PagoProveedorViewDialog').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ParametroEditDlg" widgetVar="ParametroEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditParametroTitle}">
+            <h:form id="ParametroEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{parametroController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditParametroLabel_idParametro}" for="idParametro" />
+                        <p:inputText id="idParametro" value="#{parametroController.selected.idParametro}" title="#{bundle.EditParametroTitle_idParametro}" required="true" requiredMessage="#{bundle.EditParametroRequiredMessage_idParametro}"/>
+                        <p:outputLabel value="#{bundle.EditParametroLabel_grupo}" for="grupo" />
+                        <p:inputText id="grupo" value="#{parametroController.selected.grupo}" title="#{bundle.EditParametroTitle_grupo}" />
+                        <p:outputLabel value="#{bundle.EditParametroLabel_llave}" for="llave" />
+                        <p:inputText id="llave" value="#{parametroController.selected.llave}" title="#{bundle.EditParametroTitle_llave}" />
+                        <p:outputLabel value="#{bundle.EditParametroLabel_valorCadena}" for="valorCadena" />
+                        <p:inputText id="valorCadena" value="#{parametroController.selected.valorCadena}" title="#{bundle.EditParametroTitle_valorCadena}" />
+                        <p:outputLabel value="#{bundle.EditParametroLabel_valorNumero}" for="valorNumero" />
+                        <p:inputText id="valorNumero" value="#{parametroController.selected.valorNumero}" title="#{bundle.EditParametroTitle_valorNumero}" />
+                        <p:outputLabel value="#{bundle.EditParametroLabel_estado}" for="estado" />
+                        <p:inputText id="estado" value="#{parametroController.selected.estado}" title="#{bundle.EditParametroTitle_estado}" />
+                        <p:outputLabel value="#{bundle.EditParametroLabel_fechCreacion}" for="fechCreacion" />
+                        <p:calendar id="fechCreacion" pattern="MM/dd/yyyy HH:mm:ss" value="#{parametroController.selected.fechCreacion}" title="#{bundle.EditParametroTitle_fechCreacion}"  showOn="button"/>
+                        <p:outputLabel value="#{bundle.EditParametroLabel_usuarioCreacion}" for="usuarioCreacion" />
+                        <p:inputText id="usuarioCreacion" value="#{parametroController.selected.usuarioCreacion}" title="#{bundle.EditParametroTitle_usuarioCreacion}" />
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{parametroController.update}" value="#{bundle.Save}" update="display,:ParametroListForm:datalist,:growl" oncomplete="handleSubmit(args, 'ParametroEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="ParametroEditDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

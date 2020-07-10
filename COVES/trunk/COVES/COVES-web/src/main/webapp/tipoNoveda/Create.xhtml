@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="TipoNovedaCreateDlg" widgetVar="TipoNovedaCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateTipoNovedaTitle}">
+            <h:form id="TipoNovedaCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{tipoNovedaController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateTipoNovedaLabel_descripcion}" for="descripcion" />
+                        <p:inputText id="descripcion" value="#{tipoNovedaController.selected.descripcion}" title="#{bundle.CreateTipoNovedaTitle_descripcion}" />
+                        <p:outputLabel value="#{bundle.CreateTipoNovedaLabel_sigla}" for="sigla" />
+                        <p:selectOneRadio id="sigla" value="#{tipoNovedaController.selected.sigla}">
+                            <f:selectItem itemLabel="Devolución" itemValue="+" />
+                            <f:selectItem itemLabel="Dar de Baja" itemValue="-" />
+                        </p:selectOneRadio>
+                        
+                        <p:outputLabel value="#{bundle.CreateTipoNovedaLabel_estado}" for="estado" />
+                        <p:selectOneRadio id="estado" value="#{tipoNovedaController.selected.estado}">
+                            <f:selectItem itemLabel="Activo" itemValue="A" />
+                            <f:selectItem itemLabel="Inactivo" itemValue="I" />
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{tipoNovedaController.create}" value="#{bundle.Save}" update="display,:TipoNovedaListForm:datalist,:growl" oncomplete="handleSubmit(args,'TipoNovedaCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF(TipoNovedaCreateDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

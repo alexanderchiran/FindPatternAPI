@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="InventarioTiendaEditDlg" widgetVar="InventarioTiendaEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.EditInventarioTiendaTitle}">
+            <h:form id="InventarioTiendaEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{inventarioTiendaController.selected != null}">
+                        <p:outputLabel value="#{bundle.EditInventarioTiendaLabel_existencia}" for="existencia" />
+                        <p:inputText id="existencia" value="#{inventarioTiendaController.selected.existencia}" title="#{bundle.EditInventarioTiendaTitle_existencia}" />
+                        <p:outputLabel value="#{bundle.EditInventarioTiendaLabel_idProducto}" for="idProducto" />
+                        <p:selectOneMenu id="idProducto" value="#{inventarioTiendaController.selected.idProducto}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{productoController.itemsAvailableSelectOne}"
+                                           var="idProductoItem"
+                                           itemLabel="#{idProductoItem.codigo}&nbsp;-&nbsp;#{idProductoItem.descripcion}"
+                                           itemValue="#{idProductoItem}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{bundle.EditInventarioTiendaLabel_idTienda}" for="idTienda" />
+                        <p:selectOneMenu id="idTienda" value="#{inventarioTiendaController.selected.idTienda}" >
+                            <f:selectItem itemLabel="#{bundle.SelectOneMessage}"/>
+                            <f:selectItems value="#{tiendaController.itemsAvailableSelectOne}"
+                                           var="idTiendaItem"
+                                           itemLabel="#{idTiendaItem.descripcion}"
+                                           itemValue="#{idTiendaItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{inventarioTiendaController.update}" value="#{bundle.Save}" update="display,:InventarioTiendaListForm:datalist,:growl" oncomplete="handleSubmit(args, 'InventarioTiendaEditDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="PF(InventarioTiendaEditDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

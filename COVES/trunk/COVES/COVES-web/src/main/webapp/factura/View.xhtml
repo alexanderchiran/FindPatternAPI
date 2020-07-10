@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="FacturaViewDlg" widgetVar="FacturaViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewFacturaTitle}">
+            <h:form id="FacturaViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{facturaController.selected != null}">
+                       
+                        <h:outputText value="#{bundle.ViewFacturaLabel_numeroFactura}"/>
+                        <h:outputText value="#{facturaController.selected.numeroFactura}" title="#{bundle.ViewFacturaTitle_numeroFactura}"/>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_vendedor}"/>
+                        <h:outputText value="#{facturaController.selected.vendedor}" title="#{bundle.ViewFacturaTitle_vendedor}"/>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_fechaVenta}"/>
+                        <h:outputText value="#{facturaController.selected.fechaVenta}" title="#{bundle.ViewFacturaTitle_fechaVenta}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_fechaVencimiento}"/>
+                        <h:outputText value="#{facturaController.selected.fechaVencimiento}" title="#{bundle.ViewFacturaTitle_fechaVencimiento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_tipoPago}"/>
+                        <h:outputText value="#{facturaController.selected.tipoPago}" title="#{bundle.ViewFacturaTitle_tipoPago}"/>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_subtotal}"/>
+                        <h:outputText value="#{facturaController.selected.subtotal}" title="#{bundle.ViewFacturaTitle_subtotal}">
+                         <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_iva}"/>
+                        <h:outputText value="#{facturaController.selected.iva}" title="#{bundle.ViewFacturaTitle_iva}">
+                             <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_total}"/>
+                        <h:outputText value="#{facturaController.selected.total}" title="#{bundle.ViewFacturaTitle_total}">
+                             <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_efectivo}"/>
+                        <h:outputText value="#{facturaController.selected.efectivo}" title="#{bundle.ViewFacturaTitle_efectivo}">
+                             <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_cambio}"/>
+                        <h:outputText value="#{facturaController.selected.cambio}" title="#{bundle.ViewFacturaTitle_cambio}">
+                             <f:convertNumber pattern="###,###" currencySymbol="$" type="currency"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="#{bundle.ViewFacturaLabel_idCliente}"/>
+                        <h:outputText value="#{facturaController.selected.idCliente.nombres} #{facturaController.selected.idCliente.apellidos}" title="#{bundle.ViewFacturaTitle_idCliente}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="PF('FacturaViewDialog').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

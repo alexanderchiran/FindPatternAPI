@@ -1,0 +1,6 @@
+projectKey=Coves
+serverUrl=http://localhost:9000
+serverVersion=6.5.0.27846
+dashboardUrl=http://localhost:9000/dashboard/index/Coves
+ceTaskId=AV4udSp-W1LewWGKN80n
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AV4udSp-W1LewWGKN80n

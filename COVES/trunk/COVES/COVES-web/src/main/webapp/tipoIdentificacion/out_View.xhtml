@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="TipoIdentificacionViewDlg" widgetVar="TipoIdentificacionViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewTipoIdentificacionTitle}">
+            <h:form id="TipoIdentificacionViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{tipoIdentificacionController.selected != null}">
+                        <h:outputText value="#{bundle.ViewTipoIdentificacionLabel_idTipoIdentificacion}"/>
+                        <h:outputText value="#{tipoIdentificacionController.selected.idTipoIdentificacion}" title="#{bundle.ViewTipoIdentificacionTitle_idTipoIdentificacion}"/>
+                        <h:outputText value="#{bundle.ViewTipoIdentificacionLabel_descripcion}"/>
+                        <h:outputText value="#{tipoIdentificacionController.selected.descripcion}" title="#{bundle.ViewTipoIdentificacionTitle_descripcion}"/>
+                        <h:outputText value="#{bundle.ViewTipoIdentificacionLabel_sigla}"/>
+                        <h:outputText value="#{tipoIdentificacionController.selected.sigla}" title="#{bundle.ViewTipoIdentificacionTitle_sigla}"/>
+                        <h:outputText value="#{bundle.ViewTipoIdentificacionLabel_fechaCreacion}"/>
+                        <h:outputText value="#{tipoIdentificacionController.selected.fechaCreacion}" title="#{bundle.ViewTipoIdentificacionTitle_fechaCreacion}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewTipoIdentificacionLabel_usuarioCreacion}"/>
+                        <h:outputText value="#{tipoIdentificacionController.selected.usuarioCreacion}" title="#{bundle.ViewTipoIdentificacionTitle_usuarioCreacion}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="TipoIdentificacionViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

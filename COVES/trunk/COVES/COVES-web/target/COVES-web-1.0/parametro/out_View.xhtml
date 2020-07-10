@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ParametroViewDlg" widgetVar="ParametroViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewParametroTitle}">
+            <h:form id="ParametroViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{parametroController.selected != null}">
+                        <h:outputText value="#{bundle.ViewParametroLabel_idParametro}"/>
+                        <h:outputText value="#{parametroController.selected.idParametro}" title="#{bundle.ViewParametroTitle_idParametro}"/>
+                        <h:outputText value="#{bundle.ViewParametroLabel_grupo}"/>
+                        <h:outputText value="#{parametroController.selected.grupo}" title="#{bundle.ViewParametroTitle_grupo}"/>
+                        <h:outputText value="#{bundle.ViewParametroLabel_llave}"/>
+                        <h:outputText value="#{parametroController.selected.llave}" title="#{bundle.ViewParametroTitle_llave}"/>
+                        <h:outputText value="#{bundle.ViewParametroLabel_valorCadena}"/>
+                        <h:outputText value="#{parametroController.selected.valorCadena}" title="#{bundle.ViewParametroTitle_valorCadena}"/>
+                        <h:outputText value="#{bundle.ViewParametroLabel_valorNumero}"/>
+                        <h:outputText value="#{parametroController.selected.valorNumero}" title="#{bundle.ViewParametroTitle_valorNumero}"/>
+                        <h:outputText value="#{bundle.ViewParametroLabel_estado}"/>
+                        <h:outputText value="#{parametroController.selected.estado}" title="#{bundle.ViewParametroTitle_estado}"/>
+                        <h:outputText value="#{bundle.ViewParametroLabel_fechCreacion}"/>
+                        <h:outputText value="#{parametroController.selected.fechCreacion}" title="#{bundle.ViewParametroTitle_fechCreacion}">
+                            <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewParametroLabel_usuarioCreacion}"/>
+                        <h:outputText value="#{parametroController.selected.usuarioCreacion}" title="#{bundle.ViewParametroTitle_usuarioCreacion}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="ParametroViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

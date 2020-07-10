@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="CompraViewDlg" widgetVar="CompraViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewCompraTitle}">
+            <h:form id="CompraViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{compraController.selected != null}">
+                        <h:outputText value="#{bundle.ViewCompraLabel_idProducto}"/>
+                        <h:outputText value="#{compraController.selected.idProducto.codigo}&nbsp;-&nbsp;#{compraController.selected.idProducto.descripcion}" title="#{bundle.ViewCompraTitle_idProducto}"/>
+                        <h:outputText value="#{bundle.ViewCompraLabel_idProveedor}"/>
+                        <h:outputText value="#{compraController.selected.idProveedor.razonsocial}" title="#{bundle.ViewCompraTitle_idProveedor}"/>
+                        <h:outputText value="#{bundle.ViewCompraLabel_cantidad}"/>
+                        <h:outputText value="#{compraController.selected.cantidad}" title="#{bundle.ViewCompraTitle_cantidad}"/>
+                        <h:outputText value="#{bundle.ViewCompraLabel_idTienda}"/>
+                        <h:outputText value="#{compraController.selected.idTienda.descripcion}" title="#{bundle.ViewCompraTitle_idTienda}"/>
+                        <h:outputText value="#{bundle.ViewCompraLabel_costoUnitario}"/>
+                        <h:outputText value="#{compraController.selected.costoUnitario}" title="#{bundle.ViewCompraTitle_costoUnitario}"/>
+                        <h:outputText value="#{bundle.ViewCompraLabel_costoTotal}"/>
+                        <h:outputText value="#{compraController.selected.costoTotal}" title="#{bundle.ViewCompraTitle_costoTotal}"/>
+                        <h:outputText value="#{bundle.ViewCompraLabel_fechaCompra}"/>
+                        <h:outputText value="#{compraController.selected.fechaCompra}" title="#{bundle.ViewCompraTitle_fechaCompra}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>                        
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="PF(CompraViewDialog).hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
